@@ -40,8 +40,19 @@ plot(trw ~ year, data=tree, type="l", pch=16,
 plot(trw ~ year, data=tree, type="l", pch=16, 
      ylab="Tree Ring Width", xlab="Year")
 ggplot(data = tree, aes(x=year, y= trw)) + geom_line()
+
+# From this graph we can see that 
+
 ```
 
+```{r}
+
+# Creating a partial auto-correlation function graph
+
+pacf <- pacf(tree$trw, main="PACF")
+
+# With this graph you can see that there is 
+```
 
 
 
