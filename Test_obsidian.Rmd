@@ -1,0 +1,50 @@
+---
+title: "Time_Series_analysis"
+author: "Gabriel Vicencio"
+date: "11/12/2021"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Loading libraries
+
+library(nlme)
+library(spatstat)
+library(quantreg)
+library(fBasics)
+library(nls2)
+library(MASS)
+library(car)
+library(MuMIn)
+library(ggplot2)
+```
+
+# loading the dataset
+```{r}
+f <- curl("https://raw.githubusercontent.com/dalarre/Time-Series-Analysis/main/Dataset_R_2.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(d)
+```
+```{r}
+names(d)
+```
+
+```{r}
+plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
+     ylab="ppm", xlab="Year")
+```
+
+```{r}
+plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
+     ylab="ppm", xlab="Year")
+plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
+     ylab="ppm", xlab="Year")
+ggplot(data = d, aes(x=d$Year.AD, y= d$Rb)) + geom_line()
+```
+
+
