@@ -10,7 +10,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, include=FALSE}
 # Loading libraries
 
 library(nlme)
@@ -116,7 +116,6 @@ gls.mod2 <- gls(Rb ~ Year.AD, data=d, correlation = corARMA(p=0, q=3))
 
 AICc(gls.mod1)
 AICc(gls.mod2)
-AICc(gls.mod3)
 
 summary(gls.mod1)
 confint(gls.mod1)
