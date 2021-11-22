@@ -4,23 +4,20 @@ author: "Gabriel Vicencio"
 date: "11/12/2021"
 output: html_document
 ---
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, include=FALSE}
-# Loading libraries
-
+### Loading libraries
+```{r}
 library(nlme) # gls (generalized least squares)
 library(MuMIn) #AICc
 library(MASS) # acf(), pacf(), ARIMA()
-library(ggplot2) 
-library(curl)
+library(ggplot2) # for graphing
+library(curl) # for l
 ```
 
-# loading the dataset
+### loading the dataset
 ```{r}
 f <- curl("https://raw.githubusercontent.com/dalarre/Time-Series-Analysis/main/Dataset_R_2.csv")
 d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
@@ -30,24 +27,15 @@ head(d)
 names(d)
 ```
 
+### graphing the dataset
 ```{r}
-plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
-     ylab="ppm", xlab="Year")
-```
-
-# graphing the dataset
-```{r}
-plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
-     ylab="ppm", xlab="Year")
 plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
      ylab="ppm", xlab="Year")
 ggplot(data = d, aes(x=d$Year.AD, y= d$Rb)) + geom_line()
 ```
 
-
-# Analysis of the autocorrelation in the data
+### Analysis of the autocorrelation in the data
 ```{r}
-
 ### This is the pacf() function 
 ### This stands for partial auto-correlation function which is used to find auto-correlation 
 ### in the data
@@ -56,24 +44,27 @@ ggplot(data = d, aes(x=d$Year.AD, y= d$Rb)) + geom_line()
 pacf1 <- pacf(d$Rb, main="PACF")
 
 ### As you can see, there is auto correlation present in the data.
+```
 
+### creating a simple linear model of the data
+```{r}
 ### Next we will make a simple linear model of the data. 
 
 lm1 <- lm(d$Rb ~ d$Year.AD, data=d)
 summary (lm1)
+```
 
+### Analyzing autocorrelation in the residuals 
+```{r}
 ### After that, we will extract the residuals (error) from this model and see if this error is auto-correlated as well
 
 d$mod.resid <- residuals(lm1)
 pacf2 <- pacf(d$mod.resid, main="PACF - Rb residuals")
 pacf2
-### Residuals should be random. The values in this graph which are outside the confidence interval
-### tell us that the residuals are not random. The goal of this analysis will be to correct for these non-random residuals. 
-
+### Residuals should be random. The values in this graph which are outside the confidence interval tell us that the residuals are not random. The goal of this analysis will be to correct for these non-random residuals. 
 ```
 
-
-# Creating ARIMA Models
+### Creating ARIMA Models
 ```{r}
 ### ARIMA stands for autoregressive intergrated moving average models
 
@@ -93,6 +84,10 @@ ma.3 <- arima(d$mod.resid, order=c(0,0,3))
 ma.4 <- arima(d$mod.resid, order=c(0,0,4)) 
 ma.5 <- arima(d$mod.resid, order=c(0,0,5)) 
 
+```
+
+### Challenge 1: rank the ARIMA models using AICc
+```{r}
 ### After fitting multiple ARIMAs we will use AICc() to rank the models from best to worst. The lower the AICc value the better it is 
 
 AICc(ar.1)
@@ -105,7 +100,6 @@ AICc(ma.2)
 AICc(ma.3)
 AICc(ma.4)
 AICc(ma.5)
-
 ```
 
 ```{r}
