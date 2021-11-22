@@ -1,0 +1,143 @@
+---
+title: "Time_Series_analysis"
+author: "Gabriel Vicencio"
+date: "11/12/2021"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE}
+# Loading libraries
+
+library(nlme) # gls (generalized least squares)
+library(MuMIn) #AICc
+library(MASS) # acf(), pacf(), ARIMA()
+library(ggplot2) 
+library(curl)
+```
+
+# loading the dataset
+```{r}
+f <- curl("https://raw.githubusercontent.com/dalarre/Time-Series-Analysis/main/Dataset_R_2.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(d)
+```
+```{r}
+names(d)
+```
+
+```{r}
+plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
+     ylab="ppm", xlab="Year")
+```
+
+# graphing the dataset
+```{r}
+plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
+     ylab="ppm", xlab="Year")
+plot(d$Rb ~ d$Year.AD, data=d, type="l", pch=16, 
+     ylab="ppm", xlab="Year")
+ggplot(data = d, aes(x=d$Year.AD, y= d$Rb)) + geom_line()
+```
+
+
+# Analysis of the autocorrelation in the data
+```{r}
+
+### This is the pacf() function 
+### This stands for partial auto-correlation function which is used to find auto-correlation 
+### in the data
+
+?pacf()
+pacf1 <- pacf(d$Rb, main="PACF")
+
+### As you can see, there is auto correlation present in the data.
+
+### Next we will make a simple linear model of the data. 
+
+lm1 <- lm(d$Rb ~ d$Year.AD, data=d)
+summary (lm1)
+
+### After that, we will extract the residuals (error) from this model and see if this error is auto-correlated as well
+
+d$mod.resid <- residuals(lm1)
+pacf2 <- pacf(d$mod.resid, main="PACF - Rb residuals")
+pacf2
+### Residuals should be random. The values in this graph which are outside the confidence interval
+### tell us that the residuals are not random. The goal of this analysis will be to correct for these non-random residuals. 
+
+```
+
+
+# Creating ARIMA Models
+```{r}
+### ARIMA stands for autoregressive intergrated moving average models
+
+### The values p, d and q are different values which help describe the data we are trying to fit to the ARIMA model. 
+
+### In the ARIMA function in r is the model we will use to fit the data based on the parameters predicted by the pacf() 
+
+ar.1 <- arima(d$mod.resid, order=c(1,0,0)) 
+ar.2 <- arima(d$mod.resid, order=c(2,0,0))
+ar.3 <- arima(d$mod.resid, order=c(3,0,0))
+ar.4 <- arima(d$mod.resid, order=c(4,0,0))
+ar.5 <- arima(d$mod.resid, order=c(5,0,0))
+# MA
+ma.1 <- arima(d$mod.resid, order=c(0,0,1)) 
+ma.2 <- arima(d$mod.resid, order=c(0,0,2)) 
+ma.3 <- arima(d$mod.resid, order=c(0,0,3)) 
+ma.4 <- arima(d$mod.resid, order=c(0,0,4)) 
+ma.5 <- arima(d$mod.resid, order=c(0,0,5)) 
+
+### After fitting multiple ARIMAs we will use AICc() to rank the models from best to worst. The lower the AICc value the better it is 
+
+AICc(ar.1)
+AICc(ar.2)
+AICc(ar.3)
+AICc(ar.4)
+AICc(ar.5)
+AICc(ma.1)
+AICc(ma.2)
+AICc(ma.3)
+AICc(ma.4)
+AICc(ma.5)
+
+```
+
+```{r}
+### After running the AICc() we found that the models with 2 autoregressive terms and 3 moving average terms are the best fitted to the data. 
+
+### We will now use the gls() function to model these two best fitting parameters into a linear model. gls stands for generalized least squares model. This type of linear model allows us to incorporate ARIMA terms into the modeling. 
+
+gls.mod1 <- gls(Rb ~ Year.AD, data=d, correlation = corARMA(p=2, q=0))
+gls.mod2 <- gls(Rb ~ Year.AD, data=d, correlation = corARMA(p=0, q=3))
+
+
+### After creating a model with both different we can rank the models using AICc()
+
+
+AICc(gls.mod1)
+AICc(gls.mod2)
+
+### While the AICc value for model 1 is less than the model 2, they are so close we can consider than equivanlent. This means the data is either best modeled with 2 autoregressive terms or 3 moving average terms.  
+
+```
+
+```{r}
+### Let's make a summary for the first linear model and see if the residuals still have auto-correlation using pacf()
+
+summary(gls.mod1)
+confint(gls.mod1)
+
+d$new.residuals <- resid(gls.mod1, type="normalized")
+
+pacf3 <- pacf(d$new.residuals, main="PACF - GLS model residuals")
+
+###  Poof! The auto-correlation is gone! Notice how there is now no values outside the confidence intervals. That means the data has been modeled in such a way that there is no autocorrelation error that we are not accounting for in the way we model the data. 
+
+```
+
