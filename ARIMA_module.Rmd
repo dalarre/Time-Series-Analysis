@@ -14,7 +14,7 @@ library(nlme) # gls (generalized least squares)
 library(MuMIn) #AICc
 library(MASS) # acf(), pacf(), ARIMA()
 library(ggplot2) # for graphing
-library(curl) # for l
+library(curl) # for loading the data
 ```
 
 ### loading the dataset
@@ -101,26 +101,26 @@ AICc(ma.3)
 AICc(ma.4)
 AICc(ma.5)
 ```
-
-```{r}
 ### After running the AICc() we found that the models with 2 autoregressive terms and 3 moving average terms are the best fitted to the data. 
 
+### Creating linear models which account for non-random error
+```{r}
 ### We will now use the gls() function to model these two best fitting parameters into a linear model. gls stands for generalized least squares model. This type of linear model allows us to incorporate ARIMA terms into the modeling. 
 
 gls.mod1 <- gls(Rb ~ Year.AD, data=d, correlation = corARMA(p=2, q=0))
 gls.mod2 <- gls(Rb ~ Year.AD, data=d, correlation = corARMA(p=0, q=3))
+```
 
-
+### Challenge 2: rank the models using AICc
+```{r}
 ### After creating a model with both different we can rank the models using AICc()
-
 
 AICc(gls.mod1)
 AICc(gls.mod2)
-
+```
 ### While the AICc value for model 1 is less than the model 2, they are so close we can consider than equivanlent. This means the data is either best modeled with 2 autoregressive terms or 3 moving average terms.  
 
-```
-
+### Checking our work  
 ```{r}
 ### Let's make a summary for the first linear model and see if the residuals still have auto-correlation using pacf()
 
