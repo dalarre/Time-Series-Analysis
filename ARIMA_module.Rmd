@@ -261,7 +261,7 @@ auto.arima(LakeHuron)
 ```{r}
 a <- arima(LakeHuron, c(0, 1, 0)) ## We make our arima model with the coefficients obtained before
 
-pred <- predict(fit, n.ahead = 10) ## We predict the levels of the next 10 years 
+pred <- predict(a, n.ahead = 10) ## We predict the levels of the next 10 years 
 
 pred
 
