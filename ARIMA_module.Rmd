@@ -102,7 +102,7 @@ abline(reg=lm(diff(log(AirPassengers))~time(diff(log(AirPassengers))))) #Now the
 
 ### **ARIMA Model:**
 
-##### Now, we are going to use ARIMA models to get rid of autocorrelation in the residuals of models of a given dataset, to make our errors random and independent from each other. For this exercise, we are going to use the hypothetical case of an obsidian analysis by portable X-ray fluorescence. The samples were taken from one archaeological site that was active from AD 120 to 1520 (Classic to Postclassic) in Central Mexico. We can also use the ARIMA analysis to predict change over time of specific obsidian sources used by the people from this site. To be able to achieve this, we are going to use specific trace elements that can help us understand the changes in the different sources of obsidian and if it is possible to establish a temporal pattern.
+##### Now, we are going to use ARIMA models to get rid of autocorrelation in the residuals of models of a given dataset, to make our errors random and independent from each other. For this exercise, we are going to use the hypothetical case of an obsidian analysis by portable X-ray fluorescence. The samples were taken from one archaeological site that was active from AD 120 to 1520 (Classic to Postclassic) in Central Mexico. 
 
 ##### The values are presented in parts per million (ppm) and represent the mean of different obsidians analyzed with XRFp from the same site with very well-dated contexts. Each value represents the mean of all obsidians analyzed with pXRF that were recovered from various contexts dating ten-year terms.
 
@@ -227,5 +227,12 @@ qqnorm(d$new.residuals)
 qqline(d$new.residuals)
 ```
 ####  The residuals adjust pretty well to the line in the Q-Q plot, which means they are normally distributed.
+
+
+
+
+
+
+
 
 
