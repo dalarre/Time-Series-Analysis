@@ -10,13 +10,21 @@ editor_options:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+<br>
+
+<center> <img src = "https://memegenerator.net/img/instances/71458205.jpg"> </center>
+
+<br>
+
+### **Introduction:**
+
 ##### Time-Series analysis is a mathematical analysis that can predict future outputs from previous past measurements. We use time-series analysis when we have **only one variable to measure** (sales of a product for example) + timing variable. Ex: If last month I sold 20 cars and this month I have sold 25 cars, how many cars will I sell next month? My only variables are car sales and time, measured by months.
 
 ##### Thus, time-series is a series of data points organized by time order (commonly a sequence of successive equally spaced events in time). We use these time series algorithms to **create a model**, and once we have our model we can use it to predict future values.
 
 <br>
 
-##### **Look for the best model -> introduce the “past” inputs -> predict future values**
+<center> **Look for the best model -> introduce the “past” inputs -> predict future values** </center>
 
 <br>
 
@@ -48,7 +56,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ##### Let's see what does this mean using the R dataset "AirPassengers" that contains the information about the number of people who took the plane per month from 1949 to 1960. To do so and future analysis, make sure you have downloaded the following packages: **nlme**, **MuMIn**, **MASS**, **ggplot2** and **curl**.
 
-### Loading libraries
+<br>
+
+#### Loading libraries
 ```{r}
 library(nlme) # gls (generalized least squares)
 library(MuMIn) #AICc
@@ -66,18 +76,37 @@ AirPassengers #Each value represents the number of people ("Air Passengers") tha
 ##### Now let's plot the data:
 ```{r}
 plot(AirPassengers)
+abline(reg=lm(AirPassengers~time(AirPassengers)))
 ```
 
 ##### With the following line of code we can see the mean ploted as a line:
 ```{r}
-abline(reg=lm(AirPassengers~time(AirPassengers)))
+
 ```
 
-##### We see the mean (the line) is increasing every year, ans therefore our data is not stationary.
+##### We see the mean is increasing every year. In addition, dispersion is increasing with time, which means the variance is not equal at different time points. Thus, our data is not stationary. Let's transform our data using "log" and "dif" so we can apply on it a time-series analysis:
 
-##### Now that the data is stationary we can apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average).
+```{r}
+plot(log(AirPassengers)) #Using "log" function to change the variance.
+abline(reg=lm(log(AirPassengers)~time(log(AirPassengers)))) #Now the variance is constant according to time.
+```
 
-### loading the dataset
+```{r}
+plot(diff(log(AirPassengers))) #Using "diff" function to change the mean.
+abline(reg=lm(diff(log(AirPassengers))~time(diff(log(AirPassengers))))) #Now the mean is constant according to time.
+```
+
+##### Now that the data is stationary we could apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average).
+
+<br>
+
+### **ARIMA Model:**
+
+##### Now, we are going to use ARIMA models to get rid of autocorrelation in the residuals of models of a given dataset, to make our errors random and independent from each other. For this exercise, we are going to use the hypothetical case of an obsidian analysis by portable X-ray fluorescence. The samples were taken from one archaeological site that was active from AD 120 to 1520 (Classic to Postclassic) in Central Mexico. We can also use the ARIMA analysis to predict change over time of specific obsidian sources used by the people from this site. To be able to achieve this, we are going to use specific trace elements that can help us understand the changes in the different sources of obsidian and if it is possible to establish a temporal pattern.
+
+##### The values are presented in parts per million (ppm) and represent the mean of different obsidians analyzed with XRFp from the same site with very well-dated contexts. Each value represents the mean of all obsidians analyzed with pXRF that were recovered from various contexts dating ten-year terms.
+
+#### Loading the dataset:
 ```{r}
 f <- curl("https://raw.githubusercontent.com/dalarre/Time-Series-Analysis/main/Dataset_R_2.csv")
 d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
@@ -87,7 +116,7 @@ head(d)
 names(d)
 ```
 
-### graphing the dataset
+#### Graphing the dataset
 ```{r}
 plot(d$Rb ~ d$X.U.FEFF.Year.AD, data=d, type="l", pch=16, 
      ylab="ppm", xlab="Year")
@@ -198,4 +227,5 @@ qqnorm(d$new.residuals)
 qqline(d$new.residuals)
 ```
 ####  The residuals adjust pretty well to the line in the Q-Q plot, which means they are normally distributed.
+
 
