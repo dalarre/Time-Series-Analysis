@@ -169,4 +169,11 @@ pacf3 <- pacf(d$new.residuals, main="PACF - GLS model residuals")
 
 ####  Poof! The auto-correlation is gone! Notice how there is now no values outside the confidence intervals. That means the data has been modeled in such a way that there is no autocorrelation error that we are not accounting for in the way we model the data. 
 
+####  To make sure that the model is appropriate, we check if the residuals are normally distributed using a qq-plot
+
+```{r}
+qqnorm(d$new.residuals)
+qqline(d$new.residuals)
+```
+####  The residuals adjust pretty well to the line in the Q-Q plot, which means they are normally distributed.
 
