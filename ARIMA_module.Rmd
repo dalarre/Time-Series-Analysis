@@ -3,6 +3,8 @@ title: "Time Series Analysis"
 author: "Gabriel Vicencio, Max Dippel, Diego Alonso Larre and Miguel Rubio Garcia"
 date: "11/29/2021"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -44,7 +46,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
-##### Now that the data is stationary we can apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average).
+##### Let's see what does this mean using the R dataset "AirPassengers" that contains the information about the number of people who took the plane per month from 1949 to 1960. To do so and future analysis, make sure you have downloaded the following packages: **nlme**, **MuMIn**, **MASS**, **ggplot2** and **curl**.
 
 ### Loading libraries
 ```{r}
@@ -54,6 +56,26 @@ library(MASS) # acf(), pacf(), ARIMA()
 library(ggplot2) # for graphing
 library(curl) # for loading the data
 ```
+
+##### First let's take a look to our data:
+
+```{r}
+AirPassengers #Each value represents the number of people ("Air Passengers") that took the plane the month indicated by the column and the year indicated by the row.
+```
+
+##### Now let's plot the data:
+```{r}
+plot(AirPassengers)
+```
+
+##### With the following line of code we can see the mean ploted as a line:
+```{r}
+abline(reg=lm(AirPassengers~time(AirPassengers)))
+```
+
+##### We see the mean (the line) is increasing every year, ans therefore our data is not stationary.
+
+##### Now that the data is stationary we can apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average).
 
 ### loading the dataset
 ```{r}
