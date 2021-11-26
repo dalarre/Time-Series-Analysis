@@ -54,7 +54,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
-##### Let's see what does this mean using the R dataset "AirPassengers" that contains the information about the number of people who took the plane per month from 1949 to 1960. To do so and future analysis, make sure you have downloaded the following packages: **nlme**, **MuMIn**, **MASS**, **ggplot2** and **curl**.
+##### Let's see what does this mean using the R dataset "AirPassengers" from the "datasets" package  that contains the information about the number of people who took the plane per month from 1949 to 1960. To do so and future analysis, make sure you have downloaded the following packages: **nlme**, **MuMIn**, **MASS**, **ggplot2** and **curl**.
 
 <br>
 
@@ -65,6 +65,7 @@ library(MuMIn) #AICc
 library(MASS) # acf(), pacf(), ARIMA()
 library(ggplot2) # for graphing
 library(curl) # for loading the data
+library(forecast) # for choosing arima coefficients
 ```
 
 ##### First let's take a look to our data:
@@ -228,6 +229,46 @@ qqline(d$new.residuals)
 ```
 ####  The residuals adjust pretty well to the line in the Q-Q plot, which means they are normally distributed.
 
+
+### Forecasting
+
+#### Now, we are going to use what we have learned to predict future values of a time series. For this task, we are going to use a dataset from the package "datasets" called LakeHuron, that has information about the level of Lake Huron from 1875 to 1972
+
+#### Loading the dataset
+```{r}
+LakeHuron
+```
+
+#### Plotting it
+```{r}
+plot(LakeHuron)
+```
+
+#### After plotting the time series, we can see that the data isn't stationary, so we differentiate it 1 time to make it stationary. 
+```{r}
+plot(diff(LakeHuron))
+h <- diff(LakeHuron)
+```
+
+#### Now we are going to define the p, d and q coefficients for our ARIMA model. Auto.arima() is a function from the "forecast" package that estimates the best coefficients for building a fitting ARIMA model for your data.
+```{r}
+auto.arima(LakeHuron) 
+```
+
+#### It returns (0,1,0). d = 1 means that the data is differentiated once, as we noticed we had to do before to make the data stationary.
+
+#### Now we are going to do the predictions using the predict() function:
+```{r}
+a <- arima(LakeHuron, c(0, 1, 0)) ## We make our arima model with the coefficients obtained before
+
+pred <- predict(fit, n.ahead = 10) ## We predict the levels of the next 10 years 
+
+pred
+
+```
+
+### CHALLENGE 3: 
+#### Predict the number of people that is going to take the plane in the following 3 years using the AirPassengers dataset.
 
 
 
