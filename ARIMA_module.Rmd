@@ -97,15 +97,19 @@ plot(diff(log(AirPassengers))) #Using "diff" function to change the mean.
 abline(reg=lm(diff(log(AirPassengers))~time(diff(log(AirPassengers))))) #Now the mean is constant according to time.
 ```
 
-##### Now that the data is stationary we could apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average).
+##### Now that the data is stationary and we could apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average).
 
 <br>
 
 ### **ARIMA Model:**
 
+<br>
+
 ##### Now, we are going to use ARIMA models to get rid of autocorrelation in the residuals of models of a given dataset, to make our errors random and independent from each other. For this exercise, we are going to use the hypothetical case of an obsidian analysis by portable X-ray fluorescence. The samples were taken from one archaeological site that was active from AD 120 to 1520 (Classic to Postclassic) in Central Mexico. 
 
 ##### The values are presented in parts per million (ppm) and represent the mean of different obsidians analyzed with XRFp from the same site with very well-dated contexts. Each value represents the mean of all obsidians analyzed with pXRF that were recovered from various contexts dating ten-year terms.
+
+<br>
 
 #### Loading the dataset:
 ```{r}
@@ -117,12 +121,16 @@ head(d)
 names(d)
 ```
 
+<br>
+
 #### Graphing the dataset
 ```{r}
 plot(d$Rb ~ d$X.U.FEFF.Year.AD, data=d, type="l", pch=16, 
      ylab="ppm", xlab="Year")
 ggplot(data = d, aes(x=d$X.U.FEFF.Year.AD, y= d$Rb)) + geom_line()
 ```
+
+<br>
 
 ### Analysis of the autocorrelation in the data
 #### This is the pacf() function. This stands for partial auto-correlation function which is used to find auto-correlation in the data
@@ -139,6 +147,8 @@ lm1 <- lm(d$Rb ~ d$X.U.FEFF.Year.AD, data=d)
 summary (lm1)
 ```
 
+<br>
+
 ### Analyzing autocorrelation in the residuals 
 #### After that, we will extract the residuals (error) from this model and see if this error is auto-correlated as well
 ```{r}
@@ -152,6 +162,7 @@ pacf2
 
 #### Residuals should be random. The values in this graph which are outside the confidence interval tell us that the residuals are not random. The goal of this analysis will be to correct for these non-random residuals.
 
+<br>
 
 ### Creating ARIMA Models
 #### ARIMA stands for autoregressive intergrated moving average models. The values p, d and q are different values which help describe the data we are trying to fit to the ARIMA model. 
@@ -172,6 +183,8 @@ ma.4 <- arima(d$mod.resid, order=c(0,0,4))
 
 ```
 
+<br>
+
 ### Challenge 1: rank the ARIMA models using AICc
 #### After fitting multiple ARIMAs we will use AICc() to rank the models from best to worst. The lower the AICc value the better it is 
 ```{r}
@@ -187,6 +200,8 @@ AICc(ma.3)
 AICc(ma.4)
 ```
 #### After running the AICc() we found that the models with 2 autoregressive terms and 3 moving average terms are the best fitted to the data. 
+
+<br>
 
 ### Creating linear models which account for non-random error
 #### We will now use the gls() function to model these two best fitting parameters into a linear model. gls stands for generalized least squares model. This type of linear model allows us to incorporate ARIMA terms into the modeling. 
@@ -232,7 +247,7 @@ qqline(d$new.residuals)
 
 <br>
 
-### Forecasting
+### **Forecasting**
 
 #### Now, we are going to use what we have learned to predict future values of a time series. For this task, we are going to use a dataset from the package "datasets" called LakeHuron, that has information about the level of Lake Huron from 1875 to 1972
 
@@ -284,8 +299,9 @@ pred
 <br>
 
 ### CHALLENGE 3: 
-#### Predict the number of people that is going to take the plane in the following 3 years using the AirPassengers dataset.
+#### Using the "AirPassengers" dataset, predict the number of people that is going to take the plane in the following 3 years.
 
+#####Hint: Make sure your data is stationary before applying the model!
 
 
 
