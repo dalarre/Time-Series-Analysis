@@ -125,7 +125,7 @@ abline(reg=lm(diff(log(AirPassengers))~time(diff(log(AirPassengers)))))
 #### Loading the dataset:
 ```{r}
 f <- curl("https://raw.githubusercontent.com/dalarre/Time-Series-Analysis/main/Dataset_R_2.csv")
-d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+d <- read.csv(f, header = TRUE)
 head(d)
 ```
 ```{r}
@@ -136,9 +136,9 @@ names(d)
 
 #### Graphing the dataset
 ```{r}
-plot(Rb ~ Year.AD, data=d, type="l", pch=16, 
+plot(Rb ~ Year_AD, data=d, type="l", pch=16, 
      ylab="ppm", xlab="Year")
-ggplot(data = d, aes(x=Year.AD, y= Rb)) + geom_line()
+ggplot(data = d, aes(x=Year_AD, y= Rb)) + geom_line()
 ```
 
 <br>
@@ -154,7 +154,7 @@ pacf1 <- pacf(d$Rb, main="PACF")
 #### **Creating a simple linear model of the data**
 ##### The next step in the analysis is to make a simple linear model of the data. We know this model does not accurately capture the variation in the data. However, it is helpful to look at the error present in this model to confirm that auto-correlation is present. 
 ```{r}
-lm1 <- lm(Rb ~ Year.AD, data=d)
+lm1 <- lm(Rb ~ Year_AD, data=d)
 summary (lm1)
 ```
 
@@ -235,8 +235,8 @@ AICc(ma.4)
 ```{r}
 
 
-gls.mod1 <- gls(Rb ~ Year.AD, data=d, correlation = corARMA(p=2, q=0))
-gls.mod2 <- gls(Rb ~ Year.AD, data=d, correlation = corARMA(p=0, q=3))
+gls.mod1 <- gls(Rb ~ Year_AD, data=d, correlation = corARMA(p=2, q=0))
+gls.mod2 <- gls(Rb ~ Year_AD, data=d, correlation = corARMA(p=0, q=3))
 ```
 
 #### **Challenge 2:** rank the models using AICc
