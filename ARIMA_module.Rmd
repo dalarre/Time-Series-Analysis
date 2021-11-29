@@ -28,11 +28,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 <br>
 
-##### We don’t use time series analysis when the values are constant (if I sold 20 cars last month, 20 cars this month, it makes no sense to do an analysis for next month). Moreover, we can only use it **when the data is stationary**. When is the data stationary? There are 3 conditions:
+##### We don’t use time series analysis when the values are constant (if I sold 20 cars last month, 20 cars this month, it makes no sense to do an analysis for next month). Moreover, we can only use it **when the data is stationary**. When is the data stationary? There are some conditions:
 
 * The **mean** should be constant according to the time.
 * The **variance** should be equal at different time intervals from the mean: each point’s distance to the mean should be equal at equal intervals of time.
-* The covariance should be equal at different time intervals.
 
 
 ##### If these 3 conditions are fulfilled that means that my series is stationary and that we can use time-series analysis
@@ -43,7 +42,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * **General trend:** The “behavior” of our values (how are they going); are they increasing (upwards) or decreasing (downwards).
 * **Seasonal component:** How many peaks do we see? Example: *We have a flying company. We know that at some times of the year when there are celebrations, more people will take a plane like on Christmas, Thanksgiving or summer. So, in a year, how many peaks do we have? If there are 3 important celebrations per year, we are going to see 3 peaks. This is called the seasonal component of the time-series analysis.*
-* **Irregular fluctuation:** Random component (uncontrolled circumstances). Example: *during winter there is snow and strong winds in Boston and some flights will need to be concealed. However, these conditions are not the same every year (one year there might be a lot of and another there might be quite less).*
+* **Irregular fluctuation:** Random component (uncontrolled circumstances). Example: *during winter there is snow and strong winds in Boston and some flights will need to be concealed. However, these conditions are not the same every year (one year there might be a lot of and another there might be quite less). This factor can make our analysis useless because is not under our control (hard or impossible to predict)*
 
 <br>
 
@@ -51,6 +50,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * If we apply the **log function** ( log(variable) ) we will obtain equal variance.
 * The mean: If we apply the command “diff” (used to **differentiate**) the mean will become constant according to time. 
+It is possible that the data needs no transformation (already stationary) or that there is only need to apply one of these functions!
 
 <br>
 
@@ -68,11 +68,15 @@ library(curl) # for loading the data
 library(forecast) # for choosing arima coefficients
 ```
 
+<br>
+
 ##### First let's take a look to our data:
 
 ```{r}
 AirPassengers #Each value represents the number of people ("Air Passengers") that took the plane the month indicated by the column and the year indicated by the row.
 ```
+
+<br>
 
 ##### Now let's plot the data:
 ```{r}
@@ -80,24 +84,31 @@ plot(AirPassengers)
 abline(reg=lm(AirPassengers~time(AirPassengers)))
 ```
 
-##### With the following line of code we can see the mean ploted as a line:
-```{r}
+##### With the previous line of code we can see the mean ploted as a line.
 
-```
-
-##### We see the mean is increasing every year. In addition, dispersion is increasing with time, which means the variance is not equal at different time points. Thus, our data is not stationary. Let's transform our data using "log" and "dif" so we can apply on it a time-series analysis:
+##### We see the mean is increasing every year. In addition, dispersion is increasing with time, which means the variance is not equal at different time points. Thus, our data **is not stationary**. Let's transform our data using "log" and "dif" as we learnt before so we can apply on it a time-series analysis!
 
 ```{r}
 plot(log(AirPassengers)) #Using "log" function to change the variance.
-abline(reg=lm(log(AirPassengers)~time(log(AirPassengers)))) #Now the variance is constant according to time.
+abline(reg=lm(log(AirPassengers)~time(log(AirPassengers)))) 
 ```
+
+
+##### Now the variance is constant according to time (we can see that the distance from each peak to the line is similar).
+
+<br>
 
 ```{r}
 plot(diff(log(AirPassengers))) #Using "diff" function to change the mean.
-abline(reg=lm(diff(log(AirPassengers))~time(diff(log(AirPassengers))))) #Now the mean is constant according to time.
+abline(reg=lm(diff(log(AirPassengers))~time(diff(log(AirPassengers))))) 
 ```
 
-##### Now that the data is stationary and we could apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average).
+##### We can see that the mean is constant according to time.
+
+<br>
+
+##### Now that the data is stationary and we could apply different models for time series analysis like the ArIMa model (Autoregressive Integrated Moving average). We can apply the ARIMA model to make predictions based on our **stationary** data.
+##### We will do so at the end of the module, but before we will learn how we can also use the ARIMA model to eliminate the autocorrelation of one data set.
 
 <br>
 
@@ -132,16 +143,16 @@ ggplot(data = d, aes(x=d$X.U.FEFF.Year.AD, y= d$Rb)) + geom_line()
 
 <br>
 
-### Analysis of the autocorrelation in the data
-#### This is the pacf() function. This stands for partial auto-correlation function which is used to find auto-correlation in the data
+#### **Analysis of the autocorrelation in the data**
+##### This is the pacf() function. This stands for partial auto-correlation function which is used to find auto-correlation in the data
 ```{r}
 pacf1 <- pacf(d$Rb, main="PACF")
 ```
 
-#### As you can see, there is auto correlation present in the data. It is shown by the data points which go beyond the blue confidence interval. Specifically the auto-correlation is outside the confidence interval at a lag of 1 and 2. This will guide later analysis. 
+##### As you can see, there is auto correlation present in the data. It is shown by the data points which go beyond the blue confidence interval. Specifically the auto-correlation is outside the confidence interval at a lag of 1 and 2. This will guide later analysis. 
 
-### Creating a simple linear model of the data
-#### The next step in the analysis is to make a simple linear model of the data. We know this model does not accurately capture the variation in the data. However, it is helpful to look at the error present in this model to confirm that auto-correlation is present. 
+#### **Creating a simple linear model of the data**
+##### The next step in the analysis is to make a simple linear model of the data. We know this model does not accurately capture the variation in the data. However, it is helpful to look at the error present in this model to confirm that auto-correlation is present. 
 ```{r}
 lm1 <- lm(d$Rb ~ d$X.U.FEFF.Year.AD, data=d)
 summary (lm1)
@@ -149,8 +160,8 @@ summary (lm1)
 
 <br>
 
-### Analyzing autocorrelation in the residuals 
-#### After that, we will extract the residuals (error) from this model and see if this error is auto-correlated as well
+#### **Analyzing autocorrelation in the residuals** 
+##### After that, we will extract the residuals (error) from this model and see if this error is auto-correlated as well
 ```{r}
 
 
@@ -160,12 +171,15 @@ pacf2
 
 ```
 
-#### Residuals should be random. The values in this graph which are outside the confidence interval tell us that the residuals are not random. The goal of this analysis will be to correct for these non-random residuals.
+##### Residuals should be random. The values in this graph which are outside the confidence interval tell us that the residuals are not random. The goal of this analysis will be to correct for these non-random residuals.
 
 <br>
 
-### Creating ARIMA Models
-#### ARIMA stands for autoregressive intergrated moving average models. The values p, d and q are different values which help describe the data we are trying to fit to the ARIMA model. 
+#### **Creating ARIMA Models**
+##### ARIMA stands for autoregressive intergrated moving average models. The values p, d and q are different values which help describe the data we are trying to fit to the ARIMA model.
+
+<br>
+
 ```{r}
 ### The arima() function in r is the model we will use to fit the data based on the parameters predicted by the pacf(). Specifically, since the values outside the confidence interval were a lag term of 1 and 2 we will use auto-regressive terms and moving average terms near 1-2. In general, it is good to expand a little beyond what is beyond the confidence interval because pacf() is not perfect. 
 
@@ -185,8 +199,11 @@ ma.4 <- arima(d$mod.resid, order=c(0,0,4))
 
 <br>
 
-### Challenge 1: rank the ARIMA models using AICc
-#### After fitting multiple ARIMAs we will use AICc() to rank the models from best to worst. The lower the AICc value the better it is 
+#### **Challenge 1:** rank the ARIMA models using AICc
+##### After fitting multiple ARIMAs we will use AICc() to rank the models from best to worst. The lower the AICc value the better it is 
+
+<br>
+
 ```{r}
 
 
@@ -199,12 +216,18 @@ AICc(ma.2)
 AICc(ma.3)
 AICc(ma.4)
 ```
-#### After running the AICc() we found that the models with 2 autoregressive terms and 3 moving average terms are the best fitted to the data. 
 
 <br>
 
-### Creating linear models which account for non-random error
-#### We will now use the gls() function to model these two best fitting parameters into a linear model. gls stands for generalized least squares model. This type of linear model allows us to incorporate ARIMA terms into the modeling. 
+##### After running the AICc() we found that the models with 2 autoregressive terms and 3 moving average terms are the best fitted to the data. 
+
+<br>
+
+#### **Creating linear models which account for non-random error**
+##### We will now use the gls() function to model these two best fitting parameters into a linear model. gls stands for generalized least squares model. This type of linear model allows us to incorporate ARIMA terms into the modeling. 
+
+<br>
+
 ```{r}
 
 
@@ -212,16 +235,19 @@ gls.mod1 <- gls(Rb ~ X.U.FEFF.Year.AD, data=d, correlation = corARMA(p=2, q=0))
 gls.mod2 <- gls(Rb ~ X.U.FEFF.Year.AD, data=d, correlation = corARMA(p=0, q=3))
 ```
 
-### Challenge 2: rank the models using AICc
+#### **Challenge 2:** rank the models using AICc
 ```{r}
 AICc(gls.mod1)
 AICc(gls.mod2)
 ```
-#### While the AICc value for model 1 is less than the model 2, they are so close we can consider than equivanlent. This means the data is either best modeled with 2 autoregressive terms or 3 moving average terms.  
+
+<br>
+
+##### While the AICc value for model 1 is less than the model 2, they are so close we can consider than equivanlent. This means the data is either best modeled with 2 autoregressive terms or 3 moving average terms.  
 
 
-### Checking our work  
-#### Let's make a summary for the first linear model and see if the residuals still have auto-correlation using pacf()
+#### **Checking our work**  
+##### Let's make a summary for the first linear model and see if the residuals still have auto-correlation using pacf()
 ```{r}
 summary(gls.mod1)
 confint(gls.mod1)
@@ -231,9 +257,9 @@ d$new.residuals <- resid(gls.mod1, type="normalized")
 pacf3 <- pacf(d$new.residuals, main="PACF - GLS model residuals")
 ```
 
-####  Poof! The auto-correlation is gone! Notice how there is now no values outside the confidence intervals. That means the data has been modeled in such a way that there is no autocorrelation error that we are not accounting for in the way we model the data. 
+#####  Poof! The auto-correlation is gone! Notice how there is now no values outside the confidence intervals. That means the data has been modeled in such a way that there is no autocorrelation error that we are not accounting for in the way we model the data. 
 
-####  To make sure that the model is appropriate, we check if the residuals are normally distributed using a qq-plot
+#####  To make sure that the model is appropriate, we check if the residuals are normally distributed using a qq-plot
 
 <br>
 
@@ -243,13 +269,13 @@ qqline(d$new.residuals)
 ```
 
 
-####  The residuals adjust pretty well to the line in the Q-Q plot, which means they are normally distributed.
+#####  The residuals adjust pretty well to the line in the Q-Q plot, which means they are normally distributed.
 
 <br>
 
-### **Forecasting**
+### **Forecasting with ARIMA**
 
-#### Now, we are going to use what we have learned to predict future values of a time series. For this task, we are going to use a dataset from the package "datasets" called LakeHuron, that has information about the level of Lake Huron from 1875 to 1972
+##### In this last part of the module we are going learn to predict future values of a time series. For this task, we are going to use a dataset from the package "datasets" called "LakeHuron", that has information about the level of Lake Huron from 1875 to 1972.
 
 <br>
 
@@ -282,6 +308,8 @@ h <- diff(LakeHuron)
 auto.arima(LakeHuron) 
 ```
 
+<br>
+
 #### It returns (0,1,0). d = 1 means that the data is differentiated once, as we noticed we had to do before to make the data stationary.
 
 <br>
@@ -298,10 +326,10 @@ pred
 
 <br>
 
-### CHALLENGE 3: 
-#### Using the "AirPassengers" dataset, predict the number of people that is going to take the plane in the following 3 years.
+#### **Challenge 3:** 
+##### Using the "AirPassengers" dataset, predict the number of people that is going to take the plane in the following 3 years.
 
-#####Hint: Make sure your data is stationary before applying the model!
+##### Hint: Make sure your data is stationary before applying the model!
 
 
 
