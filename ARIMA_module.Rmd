@@ -177,10 +177,21 @@ pacf2
 
 #### **Creating ARIMA Models**
 ##### ARIMA stands for autoregressive intergrated moving average models. The values p, d and q are different values which help describe the data we are trying to fit to the ARIMA model. 
-#### p is the number of auto-regressive terms. This is the number of lag observations in the model; also known as the lag order. Lag is defined as Lag is defined as the shift of a time series back by a given number of observations. 
-#### d is the number of non-seasonal differences. The number of times that the raw observations are differenced, also called the degree of differencing. (The use of differencing of raw observations (e.g. subtracting an observation from an observation at the previous time step) in order to make the time series stationary).
-# q is the number of moving average terms. 
+##### p is the number of auto-regressive terms. This is the number of lag observations in the model; also known as the lag order. Lag is defined as Lag is defined as the shift of a time series back by a given number of observations. Mathmatically lag means the current value is predicted from a linear combination of the previous values. 
 
+##### AR(p): Yt = u + B(1) x Y(t-1) + B(2) x Y (t-2) + ... + B(p) x Y(t-p) + e
+
+##### u = the mean of the time series, Y = a given value in the time series, B = a weight given to each value in the time series, e = the error
+
+##### d is the number of non-seasonal differences. The number of times that the raw observations are differenced, also called the degree of differencing. (The use of differencing of raw observations (e.g. subtracting an observation from an observation at the previous time step) in order to make the time series stationary).
+
+##### q is the number of moving average terms. Mathmatically this means each value in a time series is predicted by the a linear combination of q previous errors. 
+
+##### MA(q): Yt = u + B(1) x e(t-1) + B(2) x e(t-2) + ... + B(p) x e(t-q) + e
+
+##### u = the mean of the time series, Y = a given value in the time series, B = a weight given to each value in the time series, e = the error
+
+###### Source: R in Action by Rob Kabacoff 
 
 <br>
 
