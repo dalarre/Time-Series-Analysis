@@ -139,6 +139,9 @@ names(d)
 plot(Rb ~ Year_AD, data=d, type="l", pch=16, 
      ylab="ppm", xlab="Year")
 ggplot(data = d, aes(x=Year_AD, y= Rb)) + geom_line()
+
+#If you obtain an error "object 'Year_AD' not found" try to write "X.U.FEFF.Year_AD" instead. We think it has to do with mac / windows.
+
 ```
 
 <br>
