@@ -577,16 +577,28 @@ pacf2 &lt;- pacf(d$mod.resid, main=&quot;PACF - Rb residuals&quot;)</code></pre>
 <div id="arima-stands-for-autoregressive-intergrated-moving-average-models.-the-values-p-d-and-q-are-different-values-which-help-describe-the-data-we-are-trying-to-fit-to-the-arima-model." class="section level5">
 <h5>ARIMA stands for autoregressive intergrated moving average models. The values p, d and q are different values which help describe the data we are trying to fit to the ARIMA model.</h5>
 </div>
+<div id="p-is-the-number-of-auto-regressive-terms.-this-is-the-number-of-lag-observations-in-the-model-also-known-as-the-lag-order.-lag-is-defined-as-lag-is-defined-as-the-shift-of-a-time-series-back-by-a-given-number-of-observations.-mathmatically-lag-means-the-current-value-is-predicted-from-a-linear-combination-of-the-previous-values." class="section level5">
+<h5>p is the number of auto-regressive terms. This is the number of lag observations in the model; also known as the lag order. Lag is defined as Lag is defined as the shift of a time series back by a given number of observations. Mathmatically lag means the current value is predicted from a linear combination of the previous values.</h5>
 </div>
-<div id="p-is-the-number-of-auto-regressive-terms.-this-is-the-number-of-lag-observations-in-the-model-also-known-as-the-lag-order.-lag-is-defined-as-lag-is-defined-as-the-shift-of-a-time-series-back-by-a-given-number-of-observations." class="section level4">
-<h4>p is the number of auto-regressive terms. This is the number of lag observations in the model; also known as the lag order. Lag is defined as Lag is defined as the shift of a time series back by a given number of observations.</h4>
+<div id="arp-yt-u-b1-x-yt-1-b2-x-y-t-2-bp-x-yt-p-e" class="section level5">
+<h5>AR(p): Yt = u + B(1) x Y(t-1) + B(2) x Y (t-2) + … + B(p) x Y(t-p) + e</h5>
 </div>
-<div id="d-is-the-number-of-non-seasonal-differences.-the-number-of-times-that-the-raw-observations-are-differenced-also-called-the-degree-of-differencing.-the-use-of-differencing-of-raw-observations-e.g.subtracting-an-observation-from-an-observation-at-the-previous-time-step-in-order-to-make-the-time-series-stationary." class="section level4">
-<h4>d is the number of non-seasonal differences. The number of times that the raw observations are differenced, also called the degree of differencing. (The use of differencing of raw observations (e.g. subtracting an observation from an observation at the previous time step) in order to make the time series stationary).</h4>
+<div id="u-the-mean-of-the-time-series-y-a-given-value-in-the-time-series-b-a-weight-given-to-each-value-in-the-time-series-e-the-error" class="section level5">
+<h5>u = the mean of the time series, Y = a given value in the time series, B = a weight given to each value in the time series, e = the error</h5>
 </div>
+<div id="d-is-the-number-of-non-seasonal-differences.-the-number-of-times-that-the-raw-observations-are-differenced-also-called-the-degree-of-differencing.-the-use-of-differencing-of-raw-observations-e.g.subtracting-an-observation-from-an-observation-at-the-previous-time-step-in-order-to-make-the-time-series-stationary." class="section level5">
+<h5>d is the number of non-seasonal differences. The number of times that the raw observations are differenced, also called the degree of differencing. (The use of differencing of raw observations (e.g. subtracting an observation from an observation at the previous time step) in order to make the time series stationary).</h5>
 </div>
-<div id="q-is-the-number-of-moving-average-terms." class="section level1">
-<h1>q is the number of moving average terms.</h1>
+<div id="q-is-the-number-of-moving-average-terms.-mathmatically-this-means-each-value-in-a-time-series-is-predicted-by-the-a-linear-combination-of-q-previous-errors." class="section level5">
+<h5>q is the number of moving average terms. Mathmatically this means each value in a time series is predicted by the a linear combination of q previous errors.</h5>
+</div>
+<div id="maq-yt-u-b1-x-et-1-b2-x-et-2-bp-x-et-q-e" class="section level5">
+<h5>MA(q): Yt = u + B(1) x e(t-1) + B(2) x e(t-2) + … + B(p) x e(t-q) + e</h5>
+</div>
+<div id="u-the-mean-of-the-time-series-y-a-given-value-in-the-time-series-b-a-weight-given-to-each-value-in-the-time-series-e-the-error-1" class="section level5">
+<h5>u = the mean of the time series, Y = a given value in the time series, B = a weight given to each value in the time series, e = the error</h5>
+<div id="source-r-in-action-by-rob-kabacoff" class="section level6">
+<h6>Source: R in Action by Rob Kabacoff</h6>
 <p><br></p>
 <pre class="r"><code>### The arima() function in r is the model we will use to fit the data based on the parameters predicted by the pacf(). Specifically, since the values outside the confidence interval were a lag term of 1 and 2 we will use auto-regressive terms and moving average terms near 1-2. In general, it is good to expand a little beyond what is beyond the confidence interval because pacf() is not perfect. 
 
@@ -602,6 +614,9 @@ ma.2 &lt;- arima(d$mod.resid, order=c(0,0,2))
 ma.3 &lt;- arima(d$mod.resid, order=c(0,0,3)) 
 ma.4 &lt;- arima(d$mod.resid, order=c(0,0,4)) </code></pre>
 <p><br></p>
+</div>
+</div>
+</div>
 <div id="challenge-1-rank-the-arima-models-using-aicc" class="section level4">
 <h4><strong>Challenge 1:</strong> rank the ARIMA models using AICc</h4>
 <div id="after-fitting-multiple-arimas-we-will-use-aicc-to-rank-the-models-from-best-to-worst.-the-lower-the-aicc-value-the-better-it-is" class="section level5">
@@ -706,6 +721,7 @@ qqline(d$new.residuals)</code></pre>
 <p><br></p>
 </div>
 </div>
+</div>
 <div id="forecasting-with-arima" class="section level3">
 <h3><strong>Forecasting with ARIMA</strong></h3>
 <div id="in-this-last-part-of-the-module-we-are-going-learn-to-predict-future-values-of-a-time-series.-for-this-task-we-are-going-to-use-a-dataset-from-the-package-datasets-called-lakehuron-that-has-information-about-the-level-of-lake-huron-from-1875-to-1972." class="section level5">
@@ -791,7 +807,6 @@ pred</code></pre>
 </div>
 <div id="hint-make-sure-your-data-is-stationary-before-applying-the-model" class="section level5">
 <h5>Hint: Make sure your data is stationary before applying the model!</h5>
-</div>
 </div>
 </div>
 </div>
