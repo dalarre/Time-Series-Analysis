@@ -139,6 +139,9 @@ names(d)
 plot(Rb ~ Year_AD, data=d, type="l", pch=16, 
      ylab="ppm", xlab="Year")
 ggplot(data = d, aes(x=Year_AD, y= Rb)) + geom_line()
+
+#If you obtain an error "object 'Year_AD' not found" try to write "X.U.FEFF.Year_AD" instead. We think it has to do with mac / windows.
+
 ```
 
 <br>
@@ -331,12 +334,14 @@ auto.arima(LakeHuron)
 
 #### Now we are going to do the predictions using the predict() function:
 ```{r}
-a <- arima(LakeHuron, c(0, 1, 0)) ## We make our arima model with the coefficients obtained before
+a <- arima(LakeHuron, c(0, 1, 0), list(order = c(0, 1, 0))) # We make our arima model with the coefficients obtained before
 
-pred <- predict(a, n.ahead = 10) ## We predict the levels of the next 10 years 
+pred <- predict(a, n.ahead = 10) # We predict the levels of the next 10 years.
 
 pred
 
+
+#In case you had a data set with different time subsets (month and years or days and weeks) you can select them by using "*" between the numbers in "n.ahead". Ex: 5*12 would be predict for the next 5 years the 12 months.
 ```
 
 <br>
@@ -346,9 +351,19 @@ pred
 
 ##### Hint: Make sure your data is stationary before applying the model!
 
+```{r}
+stat_air <- log(AirPassengers)
 
+#We are not using "diff" here because with "auto.arima" we will obtain "d" aka the number of times we need to apply "diff".
 
+auto.arima(stat_air)
+```
 
+```{r}
+a2 <- arima(AirPassengers, c(0, 1, 1), seasonal = list(order = c(0, 1, 1))) #We make our ARIMA model with the coefficients obtained above.
 
+pred2 <- predict(a2, n.ahead = 3*12) #Prediction of the number of passengers that will take the plane in the following 3 years.
 
+pred2
 
+```
